@@ -12,8 +12,8 @@ class homeController extends Controller
     public function index()
     {
         $data = [
-            'nama' => 'hiroku',
-            'last_login' => date('Y-m-d H:i:s'),
+            'nama'        => 'habib asyrof',
+            'last_login'      => date('Y-m-d H:i:s'),
             'list_pendidikan' => ['SD', 'SMP', 'SMA', 'S1', 'S2', 'S3']
         ];
         return view('home', $data);
