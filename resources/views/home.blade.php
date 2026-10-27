@@ -1,244 +1,264 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.portfolio')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Laravel App</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-        }
+@section('content')
+<!-- Hero -->
+<section id="hero" class="hero section dark-background">
+    <img src="{{ asset('assets-portfolio/img/hero-bg.jpg') }}" alt="" data-aos="fade-in">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <h2>{{ $profile->name }}</h2>
+        <p>I'm <span class="typed" data-typed-items="Photographer, KADEP, Mahasiswa Teknik Informatika">Photographer</span><span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span></p>
+    </div>
+</section>
 
-        .navbar-brand {
-            font-weight: bold;
-        }
-
-        .navbar {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .hero-section {
-            background-color: #3187e9;
-            color: white;
-            padding: 50px 0;
-            text-align: center;
-        }
-
-        .hero-section h1 {
-            font-size: 3rem;
-        }
-
-        .card {
-            margin-top: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .footer {
-            margin-top: 50px;
-            padding: 20px 0;
-            background-color: #f8f9fa;
-            text-align: center;
-        }
-
-        .footer p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">My Laravel App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                </ul>
+<!-- About -->
+<section id="about" class="about section">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>About</h2>
+        <p>{{ $profile->intro }}</p>
+    </div>
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-center mb-4">
+            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editProfile">Edit About</button>
+        </div>
+        <div class="row gy-4 justify-content-center">
+            <div class="col-lg-4">
+                <img src="{{ $profile->photo ? asset('assets-portfolio/img/' . $profile->photo) : asset('assets-portfolio/img/my-profile-img.jpg') }}" class="img-fluid" alt="">
+            </div>
+            <div class="col-lg-8 content">
+                <h2>{{ $profile->headline }}</h2>
+                <p class="fst-italic py-3">{{ $profile->bio }}</p>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <ul>
+                            <li><i class="bi bi-chevron-right"></i> <strong>Kampus:</strong> <span>{{ $profile->campus }}</span></li>
+                            <li><i class="bi bi-chevron-right"></i> <strong>Prodi:</strong> <span>{{ $profile->study_program }}</span></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-6">
+                        <ul>
+                            <li><i class="bi bi-chevron-right"></i> <strong>Organisasi:</strong> <span>{{ $profile->organization }}</span></li>
+                            <li><i class="bi bi-chevron-right"></i> <strong>Email:</strong> <span>{{ $profile->email }}</span></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <h1 class="display-6 mb-2">{{ $nama }}</h1>
-            <p class="lead mb-0"> {{ $last_login }}</p>
+    {{-- Modal Edit About --}}
+    <div class="modal fade" id="editProfile" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('profiles.update', $profile) }}" method="POST" enctype="multipart/form-data">
+                    @csrf @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit About</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input class="form-control mb-2" name="name" value="{{ $profile->name }}" placeholder="Nama" required>
+                        <label class="small">Ganti foto profil (kosongkan kalau tidak diganti)</label>
+                        <input class="form-control mb-2" type="file" name="photo" accept="image/*">
+                        <input class="form-control mb-2" name="intro" value="{{ $profile->intro }}" placeholder="Perkenalan singkat">
+                        <input class="form-control mb-2" name="headline" value="{{ $profile->headline }}" placeholder="Headline">
+                        <textarea class="form-control mb-2" name="bio" placeholder="Bio">{{ $profile->bio }}</textarea>
+                        <input class="form-control mb-2" name="campus" value="{{ $profile->campus }}" placeholder="Kampus">
+                        <input class="form-control mb-2" name="study_program" value="{{ $profile->study_program }}" placeholder="Prodi">
+                        <input class="form-control mb-2" name="organization" value="{{ $profile->organization }}" placeholder="Organisasi">
+                        <input class="form-control mb-2" name="email" value="{{ $profile->email }}" placeholder="Email">
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-warning">Update</button></div>
+                </form>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Content Section -->
-    <section id="content" class="container ">
+<!-- Resume -->
+<section id="resume" class="resume section">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Resume</h2>
+    </div>
+
+    <div class="container">
+        <div class="text-center mb-4">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahExp">+ Tambah Resume</button>
+        </div>
+
         <div class="row">
-            <div class="col-md-6">
-                {{-- About --}}
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">About Our Application</h5>
-                        <p class="card-text">Our application provides a clean and intuitive interface, allowing users to
-                            navigate easily and perform tasks efficiently. Built with Laravel and Bootstrap, it offers
-                            flexibility and responsiveness.</p>
-                        <a href="#" class="btn btn-primary">Explore More</a>
-                    </div>
-                </div>
-
-                <!-- Accordion -->
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseOne">
-                                About Us
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                We are a tech company that specializes in web development solutions.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseTwo">
-                                Our Services
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                We offer web development, SEO optimization, and digital marketing services.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Badge, List & Card --}}
-                
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Form Pertanyaan</h5>
-
-                        <form action="{{ route('question.store') }}" method="POST">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="nama" class="form-label">Nama</label>
-                                <input type="text" class="form-control" name="nama">
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="text" class="form-control" name="email">
-                            </div>
-                            <div class="mb-3">
-                                <label for="pertanyaan" class="form-label">Pertanyaan</label>
-                                <textarea class="form-control" rows="4" name="pertanyaan"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Kirim Pertanyaan</button>
+            @foreach(['Education', 'Organization'] as $type)
+            <div class="col-lg-6" data-aos="fade-up">
+                <h3 class="resume-title">{{ $type }}</h3>
+                @forelse(($experiences ?? collect())->where('type', $type) as $exp)
+                <div class="resume-item">
+                    <h4>{{ $exp->title }}</h4>
+                    <h5>{{ $exp->period }}</h5>
+                    <p><em>{{ $exp->place }}</em></p>
+                    <p>{{ $exp->description }}</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editExp{{ $exp->id }}">Edit</button>
+                        <form action="{{ route('experiences.destroy', $exp) }}" method="POST" onsubmit="return confirm('Hapus data ini?')">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-danger">Hapus</button>
                         </form>
                     </div>
                 </div>
+                @empty
+                <p>Belum ada data.</p>
+                @endforelse
             </div>
+            @endforeach
+        </div>
+    </div>
 
-            <div class="col-md-6">
-                {{-- Alerts --}}
-                <div class="card ">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Alerts</h3>
-                        <div class="alert alert-primary mb-2">Informational alert</div>
-                        <div class="alert alert-success mb-2">Success alert</div>
-                        <div class="alert alert-warning mb-2">Warning alert</div>
-                        <div class="alert alert-danger mb-0">Danger alert</div>
+    {{-- Modal Tambah Resume --}}
+    <div class="modal fade" id="modalTambahExp" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('experiences.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tambah Resume</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                </div>
-
-                {{-- Buttons --}}
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Buttons</h3>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-primary">Primary</button>
-                            <button class="btn btn-secondary">Secondary</button>
-                            <button class="btn btn-outline-primary">Outline</button>
-                            <button class="btn btn-success">Success</button>
-                            <button class="btn btn-danger">Danger</button>
-                        </div>
+                    <div class="modal-body">
+                        <select class="form-select mb-2" name="type" required>
+                            <option value="Education">Education</option>
+                            <option value="Organization">Organization</option>
+                        </select>
+                        <input class="form-control mb-2" name="title" placeholder="Judul / Jabatan" required>
+                        <input class="form-control mb-2" name="period" placeholder="Periode (mis. 2024 - Sekarang)">
+                        <input class="form-control mb-2" name="place" placeholder="Tempat / Organisasi">
+                        <textarea class="form-control" name="description" placeholder="Deskripsi"></textarea>
                     </div>
-                </div>
-
-                {{-- Table --}}
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Table</h3>
-                        <div class="table-responsive">
-                            <table class="table align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Role</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Ani</td>
-                                        <td>Admin</td>
-                                        <td><span class="badge text-bg-success">Active</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Budi</td>
-                                        <td>User</td>
-                                        <td><span class="badge text-bg-secondary">Inactive</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Cici</td>
-                                        <td>Editor</td>
-                                        <td><span class="badge text-bg-warning">Pending</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <p class="text-muted small mb-0">Tambahkan <code>.table-striped</code> atau
-                            <code>.table-bordered</code> sesuai kebutuhan.</p>
-                    </div>
-                </div>
+                    <div class="modal-footer"><button class="btn btn-primary">Simpan</button></div>
+                </form>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; {{ date('Y') }} My Laravel App. All Rights Reserved.</p>
+    {{-- Modal Edit Resume --}}
+    @foreach($experiences ?? [] as $exp)
+    <div class="modal fade" id="editExp{{ $exp->id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('experiences.update', $exp) }}" method="POST">
+                    @csrf @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Resume</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <select class="form-select mb-2" name="type" required>
+                            <option value="Education" @selected($exp->type == 'Education')>Education</option>
+                            <option value="Organization" @selected($exp->type == 'Organization')>Organization</option>
+                        </select>
+                        <input class="form-control mb-2" name="title" value="{{ $exp->title }}" required>
+                        <input class="form-control mb-2" name="period" value="{{ $exp->period }}">
+                        <input class="form-control mb-2" name="place" value="{{ $exp->place }}">
+                        <textarea class="form-control" name="description">{{ $exp->description }}</textarea>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-warning">Update</button></div>
+                </form>
+            </div>
         </div>
-    </footer>
+    </div>
+    @endforeach
+</section>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+<!-- Portfolio (dari database) -->
+<section id="portfolio" class="portfolio section light-background">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Portfolio</h2>
+        <p>Karya fotografi dan proyek.</p>
+    </div>
 
-</html>
+    <div class="text-center mb-4">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahWork">+ Tambah Karya</button>
+    </div>
+
+    <div class="container">
+        <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
+            <ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
+                <li data-filter="*" class="filter-active">All</li>
+                @foreach(collect($works ?? [])->pluck('category')->unique() as $cat)
+                <li data-filter=".filter-{{ Str::slug($cat) }}">{{ $cat }}</li>
+                @endforeach
+            </ul>
+
+            <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
+                @forelse($works ?? [] as $work)
+                <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-{{ Str::slug($work->category) }}">
+                    <div class="portfolio-content h-100">
+                        <img src="{{ asset('assets-portfolio/img/portfolio/' . $work->image) }}" class="img-fluid" alt="{{ $work->title }}">
+                        <div class="portfolio-info">
+                            <h4>{{ $work->title }}</h4>
+                            <p>{{ $work->description }}</p>
+                            <a href="{{ asset('assets-portfolio/img/portfolio/' . $work->image) }}" title="{{ $work->title }}" data-gallery="portfolio-gallery" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="mt-2 d-flex gap-2">
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editWork{{ $work->id }}">Edit</button>
+                        <form action="{{ route('works.destroy', $work) }}" method="POST" onsubmit="return confirm('Hapus karya ini?')">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-danger">Hapus</button>
+                        </form>
+                    </div>
+                </div>
+                @empty
+                <p class="text-center">Belum ada karya.</p>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Tambah Karya --}}
+    <div class="modal fade" id="modalTambahWork" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('works.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tambah Karya</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input class="form-control mb-2" name="title" placeholder="Judul" required>
+                        <input class="form-control mb-2" name="category" placeholder="Kategori (mis. Photography)" required>
+                        <input class="form-control mb-2" type="file" name="image" accept="image/*" required>
+                        <input class="form-control mb-2" name="year" type="number" placeholder="Tahun">
+                        <textarea class="form-control" name="description" placeholder="Deskripsi"></textarea>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-primary">Simpan</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Edit Karya --}}
+    @foreach($works ?? [] as $work)
+    <div class="modal fade" id="editWork{{ $work->id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('works.update', $work) }}" method="POST" enctype="multipart/form-data">
+                    @csrf @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Karya</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input class="form-control mb-2" name="title" value="{{ $work->title }}" required>
+                        <input class="form-control mb-2" name="category" value="{{ $work->category }}" required>
+                        <label class="small">Ganti foto (kosongkan kalau tidak diganti)</label>
+                        <input class="form-control mb-2" type="file" name="image" accept="image/*">
+                        <input class="form-control mb-2" name="year" type="number" value="{{ $work->year }}">
+                        <textarea class="form-control" name="description">{{ $work->description }}</textarea>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-warning">Update</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endforeach
+</section>
+@endsection
